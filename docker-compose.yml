@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  tl_my:
+    image: mysql:8.0.23
+    container_name: tl_my
+    environment:
+      MYSQL_DATABASE: telegram
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - tl_net
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db:/var/lib/mysql
+
+  tl_web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tl_web
+    user: "1000:1000"
+    networks:
+      - tl_net
+    ports:
+      - 9000:9000
+    volumes:
+      - ./web:/app
+    entrypoint: "make uv"
+    depends_on:
+      - tl_my
+
+  tl_adminer:
+    image: adminer
+    container_name: tl_adminer
+    working_dir: /var/www/html
+    networks:
+      - tl_net
+    ports:
+      - 9001:8080
+    depends_on:
+      - tl_my
+
+networks:
+  tl_net:
+    name: tl_net

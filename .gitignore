@@ -1,0 +1,8 @@
+/db/*
+!/db/.gitkeep
+
+/web/data/*
+!/web/data/.gitkeep
+
+/web/config.json
+__pycache__
