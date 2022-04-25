@@ -51,8 +51,17 @@ class Message(Base):
 
         return stats_data
 
-    def get_message(self, tg: Telegram, conn: Session, uid: int):
+    def get_message(self, tg: Telegram, conn: Session, limit: int):
         return conn.query(Message).where(Message.uid == uid).one_or_none()
+
+    def get_message_list(self, tg: Telegram, conn: Session, limit: int):
+        return conn.query(Message).limit(limit).all()
 
     def get_chat_message_list(self, tg: Telegram, conn: Session, chat_uid: int, limit: int = 10):
         return conn.query(Message).where(Message.chat_uid == chat_uid).limit(limit).all()
+
+    def create(self, conn: Session):
+        conn.add(self)
+        conn.commit()
+
+        return None

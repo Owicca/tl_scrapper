@@ -1,13 +1,24 @@
 import time
+from enum import Enum
 from typing import List
 
 from sqlalchemy import Column, String, JSON, Integer, select
 from sqlalchemy.sql import text
 from sqlalchemy.orm import Session
 from telegram.client import Telegram
+from pydantic import BaseModel
 
 from .database import Base
 from .telegram import run_cmd
+
+
+class ChatActions(Enum):
+    REFRESH = 1
+    UPDATE = 2
+
+
+class ChatActionsRequest(BaseModel):
+    action: ChatActions = ChatActions.REFRESH
 
 
 class Chat(Base):
@@ -41,3 +52,9 @@ class Chat(Base):
 
     def get_chat_list(self, tg: Telegram, conn: Session, limit: int = 10):
         return conn.query(Chat).limit(limit).all()
+
+    def create(self, conn: Session):
+        conn.add(self)
+        conn.commit()
+
+        return None
