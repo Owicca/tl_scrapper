@@ -23,11 +23,13 @@ conn = get_connection(config)
 def handle_message(update):
     message = update["message"]
 
-    text = "NoCaption"
-    if message["content"].get("caption") is not None:
+    if message['content']['@type'] == 'messageText':
+        text = message['content']['text']['text']
+    elif message["content"].get("caption") is not None:
         text = message["content"]["caption"]["text"]
 
-    Message(uid=message["id"], chat_uid=message["chat_id"], type=message["content"]["@type"], text=message["content"]["caption"]["text"], data=message).create(conn)
+    Message(uid=message["id"], chat_uid=message["chat_id"], type=message["content"]["@type"], text=text, data=message).create(conn)
+    print("new message", message["id"], message["chat_id"])
 
 def handle_file_update(update):
     file = update["file"]
