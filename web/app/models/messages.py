@@ -118,7 +118,7 @@ class Message(Base):
 
     def create(self, conn: Session):
         stmt = """REPLACE INTO messages VALUES(:uid, :chat_uid, :type, :text, :data)"""
-        conn.execute(stmt, msg)
+        conn.execute(stmt, self)
         conn.commit()
 
         return None
