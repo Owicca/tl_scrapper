@@ -10,7 +10,7 @@ from models.config import read_config
 from models.database import get_connection
 from models.files import File, download_files_from_messages
 from models.chats import Chat, ChatActions, ChatActionsRequest
-from models.messages import Message
+from models.messages import Message, MessageTypes
 from models.telegram import startup_telegram_session, shutdown_telegram_session, run_cmd
 
 
@@ -56,17 +56,6 @@ async def shutdown():
     print("finished cleanup")
 
 
-#@app.get("/")
-#async def index():
-#    global tg
-#
-#    data = []
-#
-#    data = download_files_from_messages(messages)
-#
-#    data = messages = Message().refresh_message_list(tg, conn, chat["id"], receive_limit=10)
-#
-#    return data
 
 @app.get("/chats/")
 async def chat_list(limit: int = 10):
@@ -86,16 +75,38 @@ async def chat_action(response: Response, data: ChatActionsRequest):
     return results
 
 
-@app.get("/chats/{chat_id}/messages/")
+@app.get("/chats/{chat_uid}/messages/")
 async def chat_message_list(chat_uid: int, limit: int = 10):
     return Message().get_chat_message_list(tg, conn, chat_uid, limit)
+
+@app.post("/chats/{chat_uid}/messages/")
+async def scrape_chat(chat_uid: int, limit: int = 25):
+    results = []
+    total = 0
+    run = True
+    from_id = 0
+
+    while run:
+        res = Message().refresh_message_list(tg, conn, chat_uid, from_id=from_id, receive_limit=limit)
+        from_id = res["last_id"]
+        step_results = res["results"]
+        cnt = len(step_results)
+        results.append(cnt)
+        total += cnt
+
+        if not step_results:
+            run = False
+        print(cnt, total, from_id, run)
+
+    return results
+
 
 @app.get("/messages/")
 async def message_list(limit: int = 10):
     return Message().get_message_list(tg, conn, limit=limit)
 
 @app.get("/messages/{uid}")
-async def message_list(response: Response, uid: int):
+async def get_message(response: Response, uid: int):
     message = Message().get_message(tg, conn, uid)
 
     if message is None:
@@ -103,12 +114,13 @@ async def message_list(response: Response, uid: int):
 
     return message
 
+
 @app.get("/files/")
 async def file_list(limit: int = 10):
     return File().get_file_list(tg, conn, limit=limit)
 
 @app.post("/files/")
-async def file_list(uid: int):
+async def file_download(uid: int):
     res = File().download_file(tg, conn, uid=uid)
 
     return res

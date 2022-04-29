@@ -11,6 +11,9 @@
     "api_hash": "12345678901234567890123456789012",
     "phone": "+12345678901",
     "database_encryption_key": "key",
-    "files_directory": "/app/data"
+    "files_directory": "/app/data",
+    "use_message_database": false,
+    "use_secret_chats": false,
+    "tdlib_verbosity": 2
   }
 }

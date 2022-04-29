@@ -1,4 +1,5 @@
 import time
+from random import uniform
 
 from telegram.client import Telegram, AuthorizationState
 
@@ -9,7 +10,10 @@ def startup_telegram_session(config: dict) -> Telegram:
         api_hash=config["telegram"]["api_hash"],
         phone=config["telegram"]["phone"],  # you can pass 'bot_token' instead
         database_encryption_key=config["telegram"]["database_encryption_key"],
-        files_directory=config["telegram"]["files_directory"]
+        files_directory=config["telegram"]["files_directory"],
+        use_message_database=config["telegram"]["use_message_database"],
+        use_secret_chats=config["telegram"]["use_secret_chats"],
+        tdlib_verbosity=config["telegram"]["tdlib_verbosity"]
     )
     state = tg.login(blocking=False)
 
@@ -35,6 +39,6 @@ def run_cmd(tg: Telegram, cmd: str, params: dict = {}) -> dict:
     res = tg.call_method(cmd, params)
     res.wait()
 
-    time.sleep(1) #throttle requests
+    time.sleep(uniform(0.5, 2.0)) #throttle requests
 
     return res.update

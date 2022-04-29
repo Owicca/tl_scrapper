@@ -28,5 +28,6 @@ CREATE TABLE `messages` (
   `chat_uid` bigint NOT NULL,
   `type` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `data` json NOT NULL
+  `data` json NOT NULL,
+  PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

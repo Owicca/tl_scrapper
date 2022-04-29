@@ -1,5 +1,5 @@
 up:
-	sudo docker-compose up -d --build --force-recreate --remove-orphans
+	sudo docker-compose up -d --build --force-recreate --remove-orphans tl_my tl_adminer
 
 start:
 	sudo docker-compose restart
