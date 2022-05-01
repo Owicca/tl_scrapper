@@ -23,6 +23,7 @@ conn = get_connection(config)
 def handle_message(update):
     message = update["message"]
 
+    text = "NoText"
     if message['content']['@type'] == 'messageText':
         text = message['content']['text']['text']
     elif message["content"].get("caption") is not None:
