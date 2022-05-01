@@ -15,5 +15,11 @@
     "use_message_database": false,
     "use_secret_chats": false,
     "tdlib_verbosity": 2
+  },
+  "http": {
+    "domain": "localhost"
+  },
+  "logger": {
+    "level": "error"
   }
 }

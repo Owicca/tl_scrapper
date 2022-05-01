@@ -12,6 +12,7 @@ from models.files import File, download_files_from_messages
 from models.chats import Chat, ChatActions, ChatActionsRequest
 from models.messages import Message, MessageTypes
 from models.telegram import startup_telegram_session, shutdown_telegram_session, run_cmd
+from models.logger import lg, LoggerLevel
 
 
 app = FastAPI()
@@ -30,7 +31,12 @@ def handle_message(update):
         text = message["content"]["caption"]["text"]
 
     Message(uid=message["id"], chat_uid=message["chat_id"], type=message["content"]["@type"], text=text, data=message).create(conn)
-    print("new message", message["id"], message["chat_id"])
+    msg = {
+        "type": "new message",
+        "m_id": message["id"],
+        "c_id": message["chat_id"]
+    }
+    lg(config, msg)
 
 def handle_file_update(update):
     file = update["file"]
@@ -49,6 +55,10 @@ async def startup():
     tg = startup_telegram_session(config)
     tg.add_message_handler(handle_message)
     tg.add_update_handler("updateFile", handle_file_update)
+    msg = {
+        "msg": "finished startup",
+    }
+    lg(config, msg)
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -56,7 +66,10 @@ async def shutdown():
 
     shutdown_telegram_session(tg)
 
-    print("finished cleanup")
+    msg = {
+        "msg": "finished cleanup"
+    }
+    lg(config, msg)
 
 
 
@@ -99,7 +112,13 @@ async def scrape_chat(chat_uid: int, message_uid: int = 0, limit: int = 25):
 
         if not step_results:
             run = False
-        print(cnt, total, from_id, run)
+        msg = {
+            "cnt": cnt,
+            "total": total,
+            "from_id": from_id,
+            "run": run
+        }
+        lg(config, msg)
 
     return results
 
