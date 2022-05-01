@@ -10,7 +10,8 @@ stop:
 run:
 	sudo docker run \
 		-ti --rm \
+		--network tl_net \
 		--name "tl_web" \
-		-p 9000:9000 \
+		-p 127.0.0.1:9000:9000 \
 		-v $(shell pwd)/web/:/app \
 		tl_scrapper_tl_web bash

@@ -81,12 +81,12 @@ async def chat_action(response: Response, data: ChatActionsRequest):
 async def chat_message_list(chat_uid: int, limit: int = 10):
     return Message().get_chat_message_list(tg, conn, chat_uid, limit)
 
-@app.post("/chats/{chat_uid}/messages/")
-async def scrape_chat(chat_uid: int, limit: int = 25):
+@app.post("/chats/{chat_uid}/messages/{message_uid}")
+async def scrape_chat(chat_uid: int, message_uid: int = 0, limit: int = 25):
     results = []
     total = 0
     run = True
-    from_id = 0
+    from_id = message_uid
 
     while run:
         res = Message().refresh_message_list(tg, conn, chat_uid, from_id=from_id, receive_limit=limit)
