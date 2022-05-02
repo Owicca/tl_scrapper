@@ -22,7 +22,6 @@ class LoggerLevel(IntEnum):
         return results
 
 def lg(config: dict, message: dict = {}, log_level: LoggerLevel = LoggerLevel.DEBUG):
-    print(log_level, LoggerLevel.map_level(config["logger"]["level"]), log_level > LoggerLevel.map_level(config["logger"]["level"]))
     if log_level.value > LoggerLevel.map_level(config["logger"]["level"]):
         return
 
